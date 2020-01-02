@@ -8,6 +8,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "hello_window", .src = "src/01_hello_window.zig", .description = "Hello GLFW Window" },
         .{ .name = "hello_triangle", .src = "src/02_hello_triangle.zig", .description = "Hello OpenGL Triangle" },
         .{ .name = "shaders", .src = "src/03_shaders.zig", .description = "OpenGL Shaders" },
+        .{ .name = "textures", .src = "src/04_textures.zig", .description = "OpenGL Textures" },
     };
 
     // Build all targets
@@ -32,19 +33,17 @@ const Target = struct {
         exe.linkSystemLibrary("shell32");
         exe.linkSystemLibrary("gdi32");
 
+        // GLFW
         exe.addIncludeDir("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\include\\");
         exe.addLibPath("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\lib");
-
-        const copts = [1][]const u8{"-std=c99"};
-
-        // STB
-        // exe.addCSourceFile("deps/stb_image/stb_image_impl.c", copts[0..]);
-
-        // GLFW
         exe.linkSystemLibrary("glfw3");
 
+        // STB
+        exe.addCSourceFile("deps/stb_image/src/stb_image_impl.c", &[_][]const u8{"-std=c99"});
+        exe.addIncludeDir("deps/stb_image/include");
+
         // GLAD
-        exe.addCSourceFile("deps/glad/src/glad.c", copts[0..]);
+        exe.addCSourceFile("deps/glad/src/glad.c", &[_][]const u8{"-std=c99"});
         exe.addIncludeDir("deps/glad/include");
 
         b.default_step.dependOn(&exe.step);

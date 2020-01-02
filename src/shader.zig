@@ -57,15 +57,15 @@ pub const Shader = struct {
         glUseProgram(self.id);
     }
 
-    pub fn setBool(self: Shader, name: []const u8, val: bool) void {
+    pub fn setBool(self: Shader, name: [:0]const u8, val: bool) void {
         // glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
     }
 
-    pub fn setInt(self: Shader, name: []const u8, val: c_int) void {
-        // glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+    pub fn setInt(self: Shader, name: [:0]const u8, val: c_int) void {
+        glUniform1i(glGetUniformLocation(self.id, name), val);
     }
 
-    pub fn setFloat(self: Shader, name: []const u8, val: f32) void {
+    pub fn setFloat(self: Shader, name: [:0]const u8, val: f32) void {
         // glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
 
