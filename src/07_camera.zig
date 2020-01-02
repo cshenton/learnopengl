@@ -19,8 +19,8 @@ const rotation = glm.rotation;
 const perspective = glm.perspective;
 
 // settings
-const SCR_WIDTH: u32 = 800;
-const SCR_HEIGHT: u32 = 600;
+const SCR_WIDTH: u32 = 1920;
+const SCR_HEIGHT: u32 = 1080;
 
 // camera
 var camera = Camera.default();
@@ -235,7 +235,7 @@ pub fn main() !void {
         ourShader.use();
 
         // pass projection matrix to shader (note that in this case it could change every frame)
-        const projection = perspective(camera.zoom / 180.0 * pi, 4.0/3.0, 0.1, 100.0);
+        const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
         ourShader.setMat4("projection", projection);
 
         // camera/view transformation

@@ -5,8 +5,8 @@ const panic = std.debug.panic;
 usingnamespace @import("c.zig");
 
 // settings
-const SCR_WIDTH: u32 = 800;
-const SCR_HEIGHT: u32 = 600;
+const SCR_WIDTH: u32 = 1920;
+const SCR_HEIGHT: u32 = 1080;
 
 const vertexShaderSource: [:0]const u8 =
     \\#version 330 core

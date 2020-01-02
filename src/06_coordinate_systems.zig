@@ -18,8 +18,8 @@ const rotation = glm.rotation;
 const perspective = glm.perspective;
 
 // settings
-const SCR_WIDTH: u32 = 800;
-const SCR_HEIGHT: u32 = 600;
+const SCR_WIDTH: u32 = 1920;
+const SCR_HEIGHT: u32 = 1080;
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
@@ -214,7 +214,7 @@ pub fn main() !void {
 
         // create transformations
         const view = translation(vec3(0.0, 0.0, -3.0));
-        const projection = perspective(45.0 / 180.0 * pi, 4.0/3.0, 0.1, 100.0);
+        const projection = perspective(45.0 / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
         // pass transformation matrices to the shader
         ourShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
         ourShader.setMat4("view", view);

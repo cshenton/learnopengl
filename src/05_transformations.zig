@@ -16,8 +16,8 @@ const translation = glm.translation;
 const rotation = glm.rotation;
 
 // settings
-const SCR_WIDTH: u32 = 800;
-const SCR_HEIGHT: u32 = 600;
+const SCR_WIDTH: u32 = 1920;
+const SCR_HEIGHT: u32 = 1080;
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
