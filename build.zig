@@ -11,6 +11,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "textures", .src = "src/04_textures.zig", .description = "OpenGL Textures" },
         .{ .name = "transformations", .src = "src/05_transformations.zig", .description = "Vector Transformations" },
         .{ .name = "coordinate_systems", .src = "src/06_coordinate_systems.zig", .description = "Coordinate Systems" },
+        .{ .name = "camera", .src = "src/07_camera.zig", .description = "Camera" },
     };
 
     // Build all targets

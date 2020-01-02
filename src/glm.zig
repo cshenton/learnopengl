@@ -62,6 +62,13 @@ fn Vector(comptime d: usize) type {
             return Self{ .vals = vs * vo };
         }
 
+        pub fn mulScalar(self: Self, other: f32) Self {
+            const vs: @Vector(d, f32) = self.vals;
+            const vo: @Vector(d, f32) = Self.fill(other).vals;
+
+            return Self{ .vals = vs * vo };
+        }
+
         pub fn div(self: Self, other: Self) Self {
             const vs: @Vector(d, f32) = self.vals;
             const vo: @Vector(d, f32) = other.vals;

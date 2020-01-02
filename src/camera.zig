@@ -6,6 +6,7 @@ const sin = std.math.sin;
 const glm = @import("glm.zig");
 const Mat4 = glm.Mat4;
 const Vec3 = glm.Vec3;
+const vec3 = glm.vec3;
 const lookAt = glm.lookAt;
 
 usingnamespace @import("c.zig");
@@ -45,10 +46,11 @@ pub const Camera = struct {
 
     // Constructor with vectors
     pub fn init(position: Vec3, up: Vec3, yaw: f32, pitch: f32) Camera {
-        const camera = Camera{
+        var camera = Camera{
             .position = position,
             .front = vec3(0.0, 0.0, -1.0),
             .up = up,
+            .right = vec3(-1.0, 0.0, 0.0),
             .worldUp = up,
 
             .yaw = yaw,
@@ -63,10 +65,11 @@ pub const Camera = struct {
     }
 
     pub fn default() Camera {
-        const camera = Camera{
-            .position = vec3(0.0, 0.0, 0.0),
+        var camera = Camera{
+            .position = vec3(0.0, 0.0, 3.0),
             .front = vec3(0.0, 0.0, -1.0),
             .up = vec3(0.0, 1.0, 0.0),
+            .right = vec3(-1.0, 0.0, 0.0),
             .worldUp = vec3(0.0, 1.0, 0.0),
 
             .yaw = YAW,
@@ -89,20 +92,17 @@ pub const Camera = struct {
     pub fn processKeyboard(self: *Camera, direction: CameraMovement, deltaTime: f32) void {
         const velocity = self.movementSpeed * deltaTime;
         switch (direction) {
-            .Forward => self.position = self.position.add(self.front * velocity),
-            .Backward => self.position = self.position.sub(self.front * velocity),
-            .Left => self.position = self.position.sub(self.right * velocity),
-            .Right => self.position = self.position.sub(self.right * velocity),
+            .Forward => self.position = self.position.add(self.front.mulScalar(velocity)),
+            .Backward => self.position = self.position.sub(self.front.mulScalar(velocity)),
+            .Left => self.position = self.position.sub(self.right.mulScalar(velocity)),
+            .Right => self.position = self.position.add(self.right.mulScalar(velocity)),
         }
     }
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    pub fn processMouseMovement(xoffset: f32, yoffset: f32) void {
-        xoffset *= self.mouseSensitivity;
-        yoffset *= self.mouseSensitivity;
-
-        self.yaw += xoffset;
-        self.pitch += yoffset;
+    pub fn processMouseMovement(self: *Camera, xoffset: f32, yoffset: f32) void {
+        self.yaw += xoffset * self.mouseSensitivity;
+        self.pitch += yoffset * self.mouseSensitivity;
 
         // Make sure that when pitch is out of bounds, screen doesn't get flipped
         if (self.pitch > 89.0)
@@ -111,7 +111,7 @@ pub const Camera = struct {
             self.pitch = -89.0;
 
         // Update Front, Right and Up Vectors using the updated Euler angles
-        updateCameraVectors();
+        self.updateCameraVectors();
     }
 
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
