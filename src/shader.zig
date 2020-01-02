@@ -75,13 +75,13 @@ pub const Shader = struct {
         if (std.mem.eql(u8, errType, "PROGRAM")) {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (success == 0) {
-                glGetShaderInfoLog(shader, 1024, null, @ptrCast([*c]u8, &infoLog));
+                glGetShaderInfoLog(shader, 1024, null, &infoLog);
                 panic("ERROR::SHADER::{}::COMPILATION_FAILED\n{}\n", .{ errType, infoLog });
             }
         } else {
             glGetShaderiv(shader, GL_LINK_STATUS, &success);
             if (success == 0) {
-                glGetShaderInfoLog(shader, 1024, null, @ptrCast([*c]u8, &infoLog));
+                glGetShaderInfoLog(shader, 1024, null, &infoLog);
                 panic("ERROR::SHADER::LINKING_FAILED\n{}\n", .{infoLog});
             }
         }

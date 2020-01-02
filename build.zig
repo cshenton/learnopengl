@@ -9,6 +9,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "hello_triangle", .src = "src/02_hello_triangle.zig", .description = "Hello OpenGL Triangle" },
         .{ .name = "shaders", .src = "src/03_shaders.zig", .description = "OpenGL Shaders" },
         .{ .name = "textures", .src = "src/04_textures.zig", .description = "OpenGL Textures" },
+        .{ .name = "transformations", .src = "src/05_transformations.zig", .description = "Vector Transformations" },
     };
 
     // Build all targets

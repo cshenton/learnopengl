@@ -67,7 +67,7 @@ pub fn main() void {
     var infoLog: [512]u8 = undefined;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success == 0) {
-        glGetShaderInfoLog(vertexShader, 512, null, @ptrCast([*c]u8, &infoLog));
+        glGetShaderInfoLog(vertexShader, 512, null, &infoLog);
         panic("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n{}\n", .{infoLog});
     }
     // fragment shader
@@ -78,7 +78,7 @@ pub fn main() void {
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (success == 0) {
-        glGetShaderInfoLog(vertexShader, 512, null, @ptrCast([*c]u8, &infoLog));
+        glGetShaderInfoLog(vertexShader, 512, null, &infoLog);
         panic("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n{}\n", .{infoLog});
     }
     // link shaders
@@ -89,7 +89,7 @@ pub fn main() void {
     // check for linking errors
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (success == 0) {
-        glGetShaderInfoLog(vertexShader, 512, null, @ptrCast([*c]u8, &infoLog));
+        glGetShaderInfoLog(vertexShader, 512, null, &infoLog);
         panic("ERROR::SHADER::PROGRAM::LINKING_FAILED\n{}\n", .{infoLog});
     }
     glDeleteShader(vertexShader);
@@ -125,7 +125,7 @@ pub fn main() void {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.len * @sizeOf(u32), &indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * @sizeOf(f32), @intToPtr([*c]c_uint, 0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
@@ -156,7 +156,7 @@ pub fn main() void {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, @intToPtr([*c]c_uint, 0));
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
         // glBindVertexArray(0); // no need to unbind it every time
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

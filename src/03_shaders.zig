@@ -69,11 +69,11 @@ pub fn main() !void {
     glBufferData(GL_ARRAY_BUFFER, vertices.len * @sizeOf(f32), &vertices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), @intToPtr([*c]c_uint, 0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
 
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), @intToPtr([*c]c_uint, 3 * @sizeOf(f32)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
     glEnableVertexAttribArray(1);
 
 
