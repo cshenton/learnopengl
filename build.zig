@@ -10,6 +10,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "shaders", .src = "src/03_shaders.zig", .description = "OpenGL Shaders" },
         .{ .name = "textures", .src = "src/04_textures.zig", .description = "OpenGL Textures" },
         .{ .name = "transformations", .src = "src/05_transformations.zig", .description = "Vector Transformations" },
+        .{ .name = "coordinate_systems", .src = "src/06_coordinate_systems.zig", .description = "Coordinate Systems" },
     };
 
     // Build all targets

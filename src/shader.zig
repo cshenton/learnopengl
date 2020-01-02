@@ -5,6 +5,8 @@ const Allocator = std.mem.Allocator;
 const cwd = std.fs.cwd;
 const OpenFlags = std.fs.File.OpenFlags;
 
+const Mat4 = @import("glm.zig").Mat4;
+
 usingnamespace @import("c.zig");
 
 pub const Shader = struct {
@@ -67,6 +69,10 @@ pub const Shader = struct {
 
     pub fn setFloat(self: Shader, name: [:0]const u8, val: f32) void {
         // glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    }
+
+    pub fn setMat4(self: Shader, name: [:0]const u8, val: Mat4) void {
+        glUniformMatrix4fv(glGetUniformLocation(self.id, name), 1, GL_FALSE, val.vals[0][0..].ptr);
     }
 
     fn checkCompileErrors(shader: c_uint, errType: []const u8) void {
