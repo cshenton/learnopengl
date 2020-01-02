@@ -6,6 +6,7 @@ pub fn build(b: *Builder) void {
     // Each tutorial stage, its source file, and description
     const targets = [_]Target{
         .{ .name = "hello_window", .src = "src/01_hello_window.zig", .description = "Hello GLFW Window" },
+        .{ .name = "hello_triangle", .src = "src/02_hello_triangle.zig", .description = "Hello OpenGL Triangle" },
     };
 
     // Build all targets
