@@ -8,7 +8,6 @@ usingnamespace @import("c.zig");
 const SCR_WIDTH: u32 = 800;
 const SCR_HEIGHT: u32 = 600;
 
-
 pub fn main() void {
     const ok = glfwInit();
     if (ok == 0) {
@@ -21,7 +20,7 @@ pub fn main() void {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     if (builtin.os == builtin.Os.macosx) {
-         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
     // glfw: initialize and configure
@@ -36,11 +35,10 @@ pub fn main() void {
     // glad: load all OpenGL function pointers
     if (gladLoadGLLoader(@ptrCast(GLADloadproc, glfwGetProcAddress)) == 0) {
         panic("Failed to initialise GLAD\n", .{});
-    }    
+    }
 
     // render loop
-    while (glfwWindowShouldClose(window) == 0)
-    {
+    while (glfwWindowShouldClose(window) == 0) {
         // input
         processInput(window);
 
@@ -56,13 +54,13 @@ pub fn main() void {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 pub extern fn processInput(window: ?*GLFWwindow) void {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 pub extern fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) void {
-    // make sure the viewport matches the new window dimensions; note that width and 
+    // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }

@@ -7,7 +7,7 @@ pub fn build(b: *Builder) void {
     const targets = [_]Target{
         .{ .name = "hello_window", .src = "src/01_hello_window.zig", .description = "Hello GLFW Window" },
         .{ .name = "hello_triangle", .src = "src/02_hello_triangle.zig", .description = "Hello OpenGL Triangle" },
-        .{ .name = "shaders", .src = "src/02_shaders.zig", .description = "OpenGL Shaders" },
+        .{ .name = "shaders", .src = "src/03_shaders.zig", .description = "OpenGL Shaders" },
     };
 
     // Build all targets

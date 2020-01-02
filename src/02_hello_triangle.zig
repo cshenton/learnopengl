@@ -16,7 +16,7 @@ const vertexShaderSource: [:0]const u8 =
     \\   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
     \\};
 ;
-const fragmentShaderSource: [:0]const u8 = 
+const fragmentShaderSource: [:0]const u8 =
     \\#version 330 core
     \\out vec4 FragColor;
     \\void main()
@@ -24,7 +24,6 @@ const fragmentShaderSource: [:0]const u8 =
     \\   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
     \\};
 ;
-
 
 pub fn main() void {
     const ok = glfwInit();
@@ -38,7 +37,7 @@ pub fn main() void {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     if (builtin.os == builtin.Os.macosx) {
-         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
     // glfw: initialize and configure
@@ -53,10 +52,10 @@ pub fn main() void {
     // glad: load all OpenGL function pointers
     if (gladLoadGLLoader(@ptrCast(GLADloadproc, glfwGetProcAddress)) == 0) {
         panic("Failed to initialise GLAD\n", .{});
-    }    
+    }
 
     // build and compile our shader program
-    
+
     // vertex shader
     const vertexShader = glCreateShader(GL_VERTEX_SHADER);
     const vertexSrcPtr: ?[*]const u8 = vertexShaderSource.ptr;
@@ -97,22 +96,22 @@ pub fn main() void {
     glDeleteShader(fragmentShader);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    
+
     const vertices = [_]f32{
-         0.5,  0.5, 0.0,  // top right
-         0.5, -0.5, 0.0,  // bottom right
-        -0.5, -0.5, 0.0,  // bottom let
-        -0.5,  0.5, 0.0,  // top left 
+        0.5,  0.5,  0.0, // top right
+        0.5,  -0.5, 0.0, // bottom right
+        -0.5, -0.5, 0.0, // bottom let
+        -0.5, 0.5,  0.0, // top left
     };
-    const indices = [_]u32{  // note that we start from 0!
-        0, 1, 3,            // first Triangle
-        1, 2, 3,            // second Triangle
+    const indices = [_]u32{ // note that we start from 0!
+        0, 1, 3, // first Triangle
+        1, 2, 3, // second Triangle
     };
     var VAO: c_uint = undefined;
     var VBO: c_uint = undefined;
     var EBO: c_uint = undefined;
     glGenVertexArrays(1, &VAO);
-    defer glDeleteVertexArrays(1, &VAO);    
+    defer glDeleteVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     defer glDeleteBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -130,28 +129,26 @@ pub fn main() void {
     glEnableVertexAttribArray(0);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     // -----------
-    while (glfwWindowShouldClose(window) == 0)
-    {
+    while (glfwWindowShouldClose(window) == 0) {
         // input
-        
         processInput(window);
 
         // render
-        
+
         glClearColor(0.2, 0.3, 0.3, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -160,10 +157,10 @@ pub fn main() void {
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, @intToPtr([*c]c_uint, 0));
-        // glBindVertexArray(0); // no need to unbind it every time 
- 
+        // glBindVertexArray(0); // no need to unbind it every time
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -171,13 +168,13 @@ pub fn main() void {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 pub extern fn processInput(window: ?*GLFWwindow) void {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 pub extern fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) void {
-    // make sure the viewport matches the new window dimensions; note that width and 
+    // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
