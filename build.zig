@@ -37,14 +37,20 @@ const Target = struct {
 
         // OS stuff
         exe.linkLibC();
-        exe.linkSystemLibrary("kernel32");
-        exe.linkSystemLibrary("user32");
-        exe.linkSystemLibrary("shell32");
-        exe.linkSystemLibrary("gdi32");
+        switch (builtin.os) {
+            .windows => {
+                exe.linkSystemLibrary("kernel32");
+                exe.linkSystemLibrary("user32");
+                exe.linkSystemLibrary("shell32");
+                exe.linkSystemLibrary("gdi32");
+
+                exe.addIncludeDir("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\include\\");
+                exe.addLibPath("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\lib\\");
+            },
+            else => {},
+        }
 
         // GLFW
-        exe.addIncludeDir("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\include\\");
-        exe.addLibPath("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\lib");
         exe.linkSystemLibrary("glfw3");
 
         // STB
