@@ -38,10 +38,10 @@ const lightPos = vec3(1.2, 1.0, 2.0);
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "08_colors.vert" });
-    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "08_colors.frag" });
-    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "08_lamp.vert" });
-    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "08_lamp.frag" });
+    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "09_basic_lighting.vert" });
+    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "09_basic_lighting.frag" });
+    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "09_lamp.vert" });
+    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "09_lamp.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -83,53 +83,53 @@ pub fn main() !void {
     const lampShader = try Shader.init(allocator, lampVertPath, lampFragPath);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
     const vertices = [_]f32{
-        -0.5, -0.5, -0.5,
-        0.5,  -0.5, -0.5,
-        0.5,  0.5,  -0.5,
-        0.5,  0.5,  -0.5,
-        -0.5, 0.5,  -0.5,
-        -0.5, -0.5, -0.5,
+        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
+        0.5,  -0.5, -0.5, 0.0,  0.0,  -1.0,
+        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
+        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
+        -0.5, 0.5,  -0.5, 0.0,  0.0,  -1.0,
+        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
 
-        -0.5, -0.5, 0.5,
-        0.5,  -0.5, 0.5,
-        0.5,  0.5,  0.5,
-        0.5,  0.5,  0.5,
-        -0.5, 0.5,  0.5,
-        -0.5, -0.5, 0.5,
+        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
+        0.5,  -0.5, 0.5,  0.0,  0.0,  1.0,
+        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+        -0.5, 0.5,  0.5,  0.0,  0.0,  1.0,
+        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
 
-        -0.5, 0.5,  0.5,
-        -0.5, 0.5,  -0.5,
-        -0.5, -0.5, -0.5,
-        -0.5, -0.5, -0.5,
-        -0.5, -0.5, 0.5,
-        -0.5, 0.5,  0.5,
+        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
+        -0.5, 0.5,  -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, 0.5,  -1.0, 0.0,  0.0,
+        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
 
-        0.5,  0.5,  0.5,
-        0.5,  0.5,  -0.5,
-        0.5,  -0.5, -0.5,
-        0.5,  -0.5, -0.5,
-        0.5,  -0.5, 0.5,
-        0.5,  0.5,  0.5,
+        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+        0.5,  0.5,  -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, 0.5,  1.0,  0.0,  0.0,
+        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
 
-        -0.5, -0.5, -0.5,
-        0.5,  -0.5, -0.5,
-        0.5,  -0.5, 0.5,
-        0.5,  -0.5, 0.5,
-        -0.5, -0.5, 0.5,
-        -0.5, -0.5, -0.5,
+        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
+        0.5,  -0.5, -0.5, 0.0,  -1.0, 0.0,
+        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
+        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
+        -0.5, -0.5, 0.5,  0.0,  -1.0, 0.0,
+        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
 
-        -0.5, 0.5,  -0.5,
-        0.5,  0.5,  -0.5,
-        0.5,  0.5,  0.5,
-        0.5,  0.5,  0.5,
-        -0.5, 0.5,  0.5,
-        -0.5, 0.5,  -0.5,
+        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
+        0.5,  0.5,  -0.5, 0.0,  1.0,  0.0,
+        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5, 0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
     };
-
     // first, configure the cube's VAO (and VBO)
-    var cubeVAO: c_uint = undefined;
     var VBO: c_uint = undefined;
+    var cubeVAO: c_uint = undefined;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
 
@@ -139,18 +139,20 @@ pub fn main() !void {
     glBindVertexArray(cubeVAO);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * @sizeOf(f32), null);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
+    glEnableVertexAttribArray(1);
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     var lampVAO: c_uint = undefined;
     glGenVertexArrays(1, &lampVAO);
     glBindVertexArray(lampVAO);
 
-    // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * @sizeOf(f32), null);
+    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
 
     // render loop
@@ -172,6 +174,8 @@ pub fn main() !void {
         cubeShader.use();
         cubeShader.setVec3("objectColor", vec3(1.0, 0.5, 0.31));
         cubeShader.setVec3("lightColor", vec3(1.0, 1.0, 1.0));
+        cubeShader.setVec3("lightPos", lightPos);
+        cubeShader.setVec3("viewPos", camera.position);
 
         // view/projection transformations
         const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
@@ -202,7 +206,6 @@ pub fn main() !void {
         glfwPollEvents();
     }
 }
-
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 pub extern fn processInput(window: ?*GLFWwindow) void {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

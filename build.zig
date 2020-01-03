@@ -13,6 +13,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "coordinate_systems", .src = "src/06_coordinate_systems.zig", .description = "Coordinate Systems" },
         .{ .name = "camera", .src = "src/07_camera.zig", .description = "Camera" },
         .{ .name = "colors", .src = "src/08_colors.zig", .description = "Colors" },
+        .{ .name = "basic_lighting", .src = "src/09_basic_lighting.zig", .description = "Basic Lighting" },
     };
 
     // Build all targets

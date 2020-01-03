@@ -58,14 +58,14 @@ pub fn main() !void {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     const vertices = [_]f32{
         // positions          // texture coords
-         0.5,  0.5, 0.0,   1.0, 1.0, // top right
-         0.5, -0.5, 0.0,   1.0, 0.0, // bottom right
-        -0.5, -0.5, 0.0,   0.0, 0.0, // bottom left
-        -0.5,  0.5, 0.0,   0.0, 1.0, // top left
+        0.5,  0.5,  0.0, 1.0, 1.0, // top right
+        0.5,  -0.5, 0.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, 0.0, 0.0, // bottom left
+        -0.5, 0.5,  0.0, 0.0, 1.0, // top left
     };
     const indices = [_]u32{
         0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+        1, 2, 3, // second triangle
     };
 
     var VAO: c_uint = undefined;
@@ -94,7 +94,6 @@ pub fn main() !void {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
     glEnableVertexAttribArray(1);
 
-
     // load and create a texture
     var texture1: c_uint = undefined;
     var texture2: c_uint = undefined;
@@ -102,7 +101,7 @@ pub fn main() !void {
     // texture 1
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
-     // set the texture wrapping parameters
+    // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters

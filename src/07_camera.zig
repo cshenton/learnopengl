@@ -32,7 +32,6 @@ var firstMouse = true;
 var deltaTime: f32 = 0.0; // time between current frame and last frame
 var lastFrame: f32 = 0.0;
 
-
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
     const vertPath = try join(allocator, &[_][]const u8{ "shaders", "06_shaders.vert" });
