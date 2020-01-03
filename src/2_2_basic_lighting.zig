@@ -4,7 +4,6 @@ const builtin = @import("builtin");
 const warn = std.debug.warn;
 const join = std.fs.path.join;
 const pi = std.math.pi;
-const sin = std.math.sin;
 
 usingnamespace @import("c.zig");
 
@@ -39,10 +38,10 @@ const lightPos = vec3(1.2, 1.0, 2.0);
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "10_materials.vert" });
-    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "10_materials.frag" });
-    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "10_lamp.vert" });
-    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "10_lamp.frag" });
+    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "2_0_lamp.vert" });
+    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "2_0_lamp.frag" });
+    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "2_2_basic_lighting.vert" });
+    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "2_2_basic_lighting.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -84,6 +83,7 @@ pub fn main() !void {
     const lampShader = try Shader.init(allocator, lampVertPath, lampFragPath);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
     const vertices = [_]f32{
         -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
         0.5,  -0.5, -0.5, 0.0,  0.0,  -1.0,
@@ -172,26 +172,10 @@ pub fn main() !void {
 
         // be sure to activate shader when setting uniforms/drawing objects
         cubeShader.use();
-        cubeShader.setVec3("light.position", lightPos);
+        cubeShader.setVec3("objectColor", vec3(1.0, 0.5, 0.31));
+        cubeShader.setVec3("lightColor", vec3(1.0, 1.0, 1.0));
+        cubeShader.setVec3("lightPos", lightPos);
         cubeShader.setVec3("viewPos", camera.position);
-
-        // light properties
-        const lightColor = vec3(
-            @floatCast(f32, sin(glfwGetTime() * 2.0)),
-            @floatCast(f32, sin(glfwGetTime() * 0.7)),
-            @floatCast(f32, sin(glfwGetTime() * 1.3)),
-        );
-        const diffuseColor = lightColor.mulScalar(0.5); // decrease the influence
-        const ambientColor = diffuseColor.mulScalar(0.2); // low influence
-        cubeShader.setVec3("light.ambient", ambientColor);
-        cubeShader.setVec3("light.diffuse", diffuseColor);
-        cubeShader.setVec3("light.specular", vec3(1.0, 1.0, 1.0));
-
-        // material properties
-        cubeShader.setVec3("material.ambient", vec3(1.0, 0.5, 0.31));
-        cubeShader.setVec3("material.diffuse", vec3(1.0, 0.5, 0.31));
-        cubeShader.setVec3("material.specular", vec3(0.5, 0.5, 0.5)); // specular lighting doesn't have full effect on this object's material
-        cubeShader.setFloat("material.shininess", 32.0);
 
         // view/projection transformations
         const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);

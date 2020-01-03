@@ -8,14 +8,21 @@ usingnamespace @import("c.zig");
 
 const Shader = @import("shader.zig").Shader;
 
+const glm = @import("glm.zig");
+const Mat4 = glm.Mat4;
+const Vec3 = glm.Vec3;
+const vec3 = glm.vec3;
+const translation = glm.translation;
+const rotation = glm.rotation;
+
 // settings
 const SCR_WIDTH: u32 = 1920;
 const SCR_HEIGHT: u32 = 1080;
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const vertPath = try join(allocator, &[_][]const u8{ "shaders", "04_shaders.vert" });
-    const fragPath = try join(allocator, &[_][]const u8{ "shaders", "04_shaders.frag" });
+    const vertPath = try join(allocator, &[_][]const u8{ "shaders", "1_5_transformations.vert" });
+    const fragPath = try join(allocator, &[_][]const u8{ "shaders", "1_5_transformations.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -50,15 +57,15 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     const vertices = [_]f32{
-        // positions       // colors        // texture coords
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0, // top right
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0, // bottom right
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, // bottom left
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0, // top left
+        // positions          // texture coords
+        0.5,  0.5,  0.0, 1.0, 1.0, // top right
+        0.5,  -0.5, 0.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, 0.0, 0.0, // bottom left
+        -0.5, 0.5,  0.0, 0.0, 1.0, // top left
     };
     const indices = [_]u32{
         0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+        1, 2, 3, // second triangle
     };
 
     var VAO: c_uint = undefined;
@@ -80,17 +87,12 @@ pub fn main() !void {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.len * @sizeOf(u32), &indices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), null);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
 
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
-    glEnableVertexAttribArray(1);
-
     // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 6 * @sizeOf(f32)));
-    glEnableVertexAttribArray(2);
-
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
+    glEnableVertexAttribArray(1);
 
     // load and create a texture
     var texture1: c_uint = undefined;
@@ -99,7 +101,7 @@ pub fn main() !void {
     // texture 1
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
-     // set the texture wrapping parameters
+    // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
@@ -163,8 +165,17 @@ pub fn main() !void {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        // render container
+        // create transformations
+        const rot = rotation(@floatCast(f32, glfwGetTime()), vec3(0.0, 0.0, 1.0));
+        const tra = translation(vec3(0.5, -0.5, 0.0));
+        const transform = tra.matmul(rot);
+
+        // get matrix's uniform location and set matrix
         ourShader.use();
+        const transformLoc = glGetUniformLocation(ourShader.id, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, transform.vals[0][0..].ptr);
+
+        // render container
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 

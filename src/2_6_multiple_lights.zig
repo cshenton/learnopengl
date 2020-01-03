@@ -40,8 +40,8 @@ const lightPos = vec3(1.2, 1.0, 2.0);
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "13_multiple_lights.vert" });
-    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "13_multiple_lights.frag" });
+    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "2_6_multiple_lights.vert" });
+    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "2_6_multiple_lights.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {

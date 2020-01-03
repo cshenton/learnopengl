@@ -13,8 +13,8 @@ const SCR_HEIGHT: u32 = 1080;
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const vertPath = try join(allocator, &[_][]const u8{ "shaders", "03_shaders.vert" });
-    const fragPath = try join(allocator, &[_][]const u8{ "shaders", "03_shaders.frag" });
+    const vertPath = try join(allocator, &[_][]const u8{ "shaders", "1_3_shaders.vert" });
+    const fragPath = try join(allocator, &[_][]const u8{ "shaders", "1_3_shaders.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
