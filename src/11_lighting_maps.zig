@@ -39,10 +39,10 @@ const lightPos = vec3(1.2, 1.0, 2.0);
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "10_materials.vert" });
-    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "10_materials.frag" });
-    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "10_lamp.vert" });
-    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "10_lamp.frag" });
+    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "11_lighting_maps.vert" });
+    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "11_lighting_maps.frag" });
+    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "11_lamp.vert" });
+    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "11_lamp.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -85,47 +85,48 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     const vertices = [_]f32{
-        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
-        0.5,  -0.5, -0.5, 0.0,  0.0,  -1.0,
-        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
-        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
-        -0.5, 0.5,  -0.5, 0.0,  0.0,  -1.0,
-        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
+        // positions          // normals           // texture coords
+        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,  0.0,  0.0,
+         0.5, -0.5, -0.5,  0.0,  0.0, -1.0,  1.0,  0.0,
+         0.5,  0.5, -0.5,  0.0,  0.0, -1.0,  1.0,  1.0,
+         0.5,  0.5, -0.5,  0.0,  0.0, -1.0,  1.0,  1.0,
+        -0.5,  0.5, -0.5,  0.0,  0.0, -1.0,  0.0,  1.0,
+        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,  0.0,  0.0,
 
-        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
-        0.5,  -0.5, 0.5,  0.0,  0.0,  1.0,
-        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
-        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
-        -0.5, 0.5,  0.5,  0.0,  0.0,  1.0,
-        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
+        -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,  0.0,  0.0,
+         0.5, -0.5,  0.5,  0.0,  0.0,  1.0,  1.0,  0.0,
+         0.5,  0.5,  0.5,  0.0,  0.0,  1.0,  1.0,  1.0,
+         0.5,  0.5,  0.5,  0.0,  0.0,  1.0,  1.0,  1.0,
+        -0.5,  0.5,  0.5,  0.0,  0.0,  1.0,  0.0,  1.0,
+        -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,  0.0,  0.0,
 
-        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
-        -0.5, 0.5,  -0.5, -1.0, 0.0,  0.0,
-        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
-        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
-        -0.5, -0.5, 0.5,  -1.0, 0.0,  0.0,
-        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
+        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,  1.0,  0.0,
+        -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,  1.0,  1.0,
+        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,  0.0,  1.0,
+        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,  0.0,  1.0,
+        -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,  0.0,  0.0,
+        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,  1.0,  0.0,
 
-        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
-        0.5,  0.5,  -0.5, 1.0,  0.0,  0.0,
-        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
-        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
-        0.5,  -0.5, 0.5,  1.0,  0.0,  0.0,
-        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+         0.5,  0.5,  0.5,  1.0,  0.0,  0.0,  1.0,  0.0,
+         0.5,  0.5, -0.5,  1.0,  0.0,  0.0,  1.0,  1.0,
+         0.5, -0.5, -0.5,  1.0,  0.0,  0.0,  0.0,  1.0,
+         0.5, -0.5, -0.5,  1.0,  0.0,  0.0,  0.0,  1.0,
+         0.5, -0.5,  0.5,  1.0,  0.0,  0.0,  0.0,  0.0,
+         0.5,  0.5,  0.5,  1.0,  0.0,  0.0,  1.0,  0.0,
 
-        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
-        0.5,  -0.5, -0.5, 0.0,  -1.0, 0.0,
-        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
-        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
-        -0.5, -0.5, 0.5,  0.0,  -1.0, 0.0,
-        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
+        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,  0.0,  1.0,
+         0.5, -0.5, -0.5,  0.0, -1.0,  0.0,  1.0,  1.0,
+         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,  1.0,  0.0,
+         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,  1.0,  0.0,
+        -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,  0.0,  0.0,
+        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,  0.0,  1.0,
 
-        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
-        0.5,  0.5,  -0.5, 0.0,  1.0,  0.0,
-        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-        -0.5, 0.5,  0.5,  0.0,  1.0,  0.0,
-        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
+        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,  0.0,  1.0,
+         0.5,  0.5, -0.5,  0.0,  1.0,  0.0,  1.0,  1.0,
+         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,  1.0,  0.0,
+         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,  1.0,  0.0,
+        -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,  0.0,  0.0,
+        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,  0.0,  1.0,
     };
     // first, configure the cube's VAO (and VBO)
     var VBO: c_uint = undefined;
@@ -137,13 +138,12 @@ pub fn main() !void {
     glBufferData(GL_ARRAY_BUFFER, vertices.len * @sizeOf(f32), &vertices, GL_STATIC_DRAW);
 
     glBindVertexArray(cubeVAO);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), null);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
-    // normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 3 * @sizeOf(f32)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 6 * @sizeOf(f32)));
+    glEnableVertexAttribArray(2);
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     var lampVAO: c_uint = undefined;
@@ -152,8 +152,17 @@ pub fn main() !void {
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * @sizeOf(f32), null);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), null);
     glEnableVertexAttribArray(0);
+
+    // load textures (we now use a utility function to keep the code more organized)
+    const diffuseMap = loadTexture("textures/container2.png");
+    const specularMap = loadTexture("textures/container2_specular.png");
+
+    // shader configuration
+    cubeShader.use();
+    cubeShader.setInt("material.diffuse", 0);
+    cubeShader.setInt("material.specular", 1);
 
     // render loop
 
@@ -176,22 +185,12 @@ pub fn main() !void {
         cubeShader.setVec3("viewPos", camera.position);
 
         // light properties
-        const lightColor = vec3(
-            @floatCast(f32, sin(glfwGetTime() * 2.0)),
-            @floatCast(f32, sin(glfwGetTime() * 0.7)),
-            @floatCast(f32, sin(glfwGetTime() * 1.3)),
-        );
-        const diffuseColor = lightColor.mulScalar(0.5); // decrease the influence
-        const ambientColor = diffuseColor.mulScalar(0.2); // low influence
-        cubeShader.setVec3("light.ambient", ambientColor);
-        cubeShader.setVec3("light.diffuse", diffuseColor);
+        cubeShader.setVec3("light.ambient", vec3(0.2, 0.2, 0.2));
+        cubeShader.setVec3("light.diffuse", vec3(0.5, 0.5, 0.5));
         cubeShader.setVec3("light.specular", vec3(1.0, 1.0, 1.0));
 
         // material properties
-        cubeShader.setVec3("material.ambient", vec3(1.0, 0.5, 0.31));
-        cubeShader.setVec3("material.diffuse", vec3(1.0, 0.5, 0.31));
-        cubeShader.setVec3("material.specular", vec3(0.5, 0.5, 0.5)); // specular lighting doesn't have full effect on this object's material
-        cubeShader.setFloat("material.shininess", 32.0);
+        cubeShader.setFloat("material.shininess", 64.0);
 
         // view/projection transformations
         const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
@@ -202,6 +201,13 @@ pub fn main() !void {
         // world transformation
         const cubeModel = Mat4.identity();
         cubeShader.setMat4("model", cubeModel);
+
+        // bind diffuse map
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseMap);
+        // bind specular map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specularMap);
 
         // render the cube
         glBindVertexArray(cubeVAO);
@@ -265,4 +271,40 @@ pub extern fn mouse_callback(window: ?*GLFWwindow, xpos: f64, ypos: f64) void {
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 pub extern fn scroll_callback(window: ?*GLFWwindow, xoffset: f64, yoffset: f64) void {
     camera.processMouseScroll(@floatCast(f32, yoffset));
+}
+
+// utility function for loading a 2D texture from file
+pub fn loadTexture(path: [:0]const u8) c_uint {
+    var textureID: c_uint = undefined;
+    glGenTextures(1, &textureID);
+
+    var width: c_int = undefined;
+    var height: c_int = undefined;
+    var nrChannels: c_int = undefined;
+    const data = stbi_load(path, &width, &height, &nrChannels, 0);
+    if (data != null) {
+        var format: GLenum = undefined;
+        if (nrChannels == 1) {
+            format = GL_RED;
+        } else if (nrChannels == 3) {
+            format = GL_RGB;
+        } else if (nrChannels == 4) {
+            format = GL_RGBA;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, @intCast(c_int, format), width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    } else {
+        warn("Failed to load texture at path: {}\n", .{path});
+    }
+
+    return textureID;
 }
