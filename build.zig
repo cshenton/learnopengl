@@ -12,6 +12,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "transformations", .src = "src/05_transformations.zig", .description = "Vector Transformations" },
         .{ .name = "coordinate_systems", .src = "src/06_coordinate_systems.zig", .description = "Coordinate Systems" },
         .{ .name = "camera", .src = "src/07_camera.zig", .description = "Camera" },
+        .{ .name = "colors", .src = "src/08_colors.zig", .description = "Colors" },
     };
 
     // Build all targets

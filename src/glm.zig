@@ -245,6 +245,17 @@ pub fn rotation(angle: f32, axis: Vec3) Mat4 {
     };
 }
 
+pub fn scale(magnitude: Vec3) Mat4 {
+    return Mat4{
+        .vals = [4][4]f32{
+            .{ magnitude.vals[0], 0.0, 0.0, 0.0 },
+            .{ 0.0, magnitude.vals[1], 0.0, 0.0 },
+            .{ 0.0, 0.0, magnitude.vals[2], 0.0 },
+            .{ 0.0, 0.0, 0.0, 1.0 },
+        },
+    };
+}
+
 /// View matrix for camera at eye, looking at center, oriented by up
 pub fn lookAt(eye: Vec3, center: Vec3, up: Vec3) Mat4 {
     const f = center.sub(eye).normalize();
