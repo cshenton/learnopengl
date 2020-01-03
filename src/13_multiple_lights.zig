@@ -140,12 +140,12 @@ pub fn main() !void {
         vec3(1.5, 0.2, -1.5),
         vec3(-1.3, 1.0, -1.5),
     };
-//     // positions of the point lights
+    //     // positions of the point lights
     const pointLightPositions = [_]Vec3{
-        vec3( 0.7,  0.2,  2.0),
-        vec3( 2.3, -3.3, -4.0),
-        vec3(-4.0,  2.0, -12.0),
-        vec3( 0.0,  0.0, -3.0),
+        vec3(0.7, 0.2, 2.0),
+        vec3(2.3, -3.3, -4.0),
+        vec3(-4.0, 2.0, -12.0),
+        vec3(0.0, 0.0, -3.0),
     };
 
     // first, configure the cube's VAO (and VBO)
@@ -174,7 +174,6 @@ pub fn main() !void {
     cubeShader.setInt("material.diffuse", 0);
     cubeShader.setInt("material.specular", 1);
 
-
     // render loop
     while (glfwWindowShouldClose(window) == 0) {
         // per-frame time logic
@@ -193,7 +192,6 @@ pub fn main() !void {
         cubeShader.use();
         cubeShader.setVec3("viewPos", camera.position);
         cubeShader.setFloat("material.shininess", 32.0);
-
 
         // Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
         // the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
