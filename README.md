@@ -5,6 +5,8 @@ the chronological order of the website, separating out the same functionality in
 The repository is intended to serve as a demonstration of how to use OpenGL with zig, both in user
 code, and with the zig build system.
 
+Currently the "Getting Started" and "Lighting" sections have been ported.
+
 ![Containers screenshot](textures/container_screenshot.png)
 
 ## Dependencies
