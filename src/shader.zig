@@ -70,7 +70,7 @@ pub const Shader = struct {
     }
 
     pub fn setFloat(self: Shader, name: [:0]const u8, val: f32) void {
-        // glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+        glUniform1f(glGetUniformLocation(self.id, name), val);
     }
 
     pub fn setMat4(self: Shader, name: [:0]const u8, val: Mat4) void {
