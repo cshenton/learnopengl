@@ -16,6 +16,7 @@ pub fn build(b: *Builder) void {
         .{ .name = "basic_lighting", .src = "src/09_basic_lighting.zig", .description = "Basic Lighting" },
         .{ .name = "materials", .src = "src/10_materials.zig", .description = "Materials" },
         .{ .name = "lighting_maps", .src = "src/11_lighting_maps.zig", .description = "Lighting Maps" },
+        .{ .name = "light_casters", .src = "src/12_light_casters.zig", .description = "Light Casters" },
     };
 
     // Build all targets

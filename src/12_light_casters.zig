@@ -5,6 +5,7 @@ const warn = std.debug.warn;
 const join = std.fs.path.join;
 const pi = std.math.pi;
 const sin = std.math.sin;
+const cos = std.math.cos;
 
 usingnamespace @import("c.zig");
 
@@ -39,10 +40,8 @@ const lightPos = vec3(1.2, 1.0, 2.0);
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
-    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "11_lighting_maps.vert" });
-    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "11_lighting_maps.frag" });
-    const lampVertPath = try join(allocator, &[_][]const u8{ "shaders", "11_lamp.vert" });
-    const lampFragPath = try join(allocator, &[_][]const u8{ "shaders", "11_lamp.frag" });
+    const cubeVertPath = try join(allocator, &[_][]const u8{ "shaders", "12_light_casters.vert" });
+    const cubeFragPath = try join(allocator, &[_][]const u8{ "shaders", "12_light_casters.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -81,7 +80,6 @@ pub fn main() !void {
 
     // build and compile our shader zprogram
     const cubeShader = try Shader.init(allocator, cubeVertPath, cubeFragPath);
-    const lampShader = try Shader.init(allocator, lampVertPath, lampFragPath);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     const vertices = [_]f32{
@@ -128,6 +126,21 @@ pub fn main() !void {
         -0.5, 0.5,  0.5,  0.0,  1.0,  0.0,  0.0, 0.0,
         -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,  0.0, 1.0,
     };
+
+    // world space positions of our cubes
+    const cubePositions = [_]Vec3{
+        vec3(0.0, 0.0, 0.0),
+        vec3(2.0, 5.0, -15.0),
+        vec3(-1.5, -2.2, -2.5),
+        vec3(-3.8, -2.0, -12.3),
+        vec3(2.4, -0.4, -3.5),
+        vec3(-1.7, 3.0, -7.5),
+        vec3(1.3, -2.0, -2.5),
+        vec3(1.5, 2.0, -2.5),
+        vec3(1.5, 0.2, -1.5),
+        vec3(-1.3, 1.0, -1.5),
+    };
+
     // first, configure the cube's VAO (and VBO)
     var VBO: c_uint = undefined;
     var cubeVAO: c_uint = undefined;
@@ -145,16 +158,6 @@ pub fn main() !void {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 6 * @sizeOf(f32)));
     glEnableVertexAttribArray(2);
 
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-    var lampVAO: c_uint = undefined;
-    glGenVertexArrays(1, &lampVAO);
-    glBindVertexArray(lampVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), null);
-    glEnableVertexAttribArray(0);
-
     // load textures (we now use a utility function to keep the code more organized)
     const diffuseMap = loadTexture("textures/container2.png");
     const specularMap = loadTexture("textures/container2_specular.png");
@@ -165,7 +168,6 @@ pub fn main() !void {
     cubeShader.setInt("material.specular", 1);
 
     // render loop
-
     while (glfwWindowShouldClose(window) == 0) {
         // per-frame time logic
         const currentFrame = @floatCast(f32, glfwGetTime());
@@ -181,16 +183,24 @@ pub fn main() !void {
 
         // be sure to activate shader when setting uniforms/drawing objects
         cubeShader.use();
-        cubeShader.setVec3("light.position", lightPos);
+        cubeShader.setVec3("light.position", camera.position);
+        cubeShader.setVec3("light.direction", camera.front);
+        cubeShader.setFloat("light.cutOff", cos(@floatCast(f32, 12.5 / 180.0 * pi)));
+        cubeShader.setFloat("light.outerCutOff", cos(@floatCast(f32, 17.5 / 180.0 * pi)));
         cubeShader.setVec3("viewPos", camera.position);
 
         // light properties
-        cubeShader.setVec3("light.ambient", vec3(0.2, 0.2, 0.2));
-        cubeShader.setVec3("light.diffuse", vec3(0.5, 0.5, 0.5));
+        cubeShader.setVec3("light.ambient", vec3(0.1, 0.1, 0.1));
+        // we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
+        // each environment and lighting type requires some tweaking to get the best out of your environment.
+        cubeShader.setVec3("light.diffuse", vec3(0.8, 0.8, 0.8));
         cubeShader.setVec3("light.specular", vec3(1.0, 1.0, 1.0));
+        cubeShader.setFloat("light.constant", 1.0);
+        cubeShader.setFloat("light.linear", 0.09);
+        cubeShader.setFloat("light.quadratic", 0.032);
 
         // material properties
-        cubeShader.setFloat("material.shininess", 64.0);
+        cubeShader.setFloat("material.shininess", 32.0);
 
         // view/projection transformations
         const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
@@ -209,19 +219,18 @@ pub fn main() !void {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
 
-        // render the cube
+        // render boxes
         glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        var i: usize = 0;
+        while (i < 10) : (i += 1) {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            const model = translation(cubePositions[i]);
+            const angle = 20.0 * @intToFloat(f32, i);
+            model = model.matmul(rotation(angle / 180.0 * pi, vec3(1.0, 0.3, 0.5)));
+            cubeShader.setMat4("model", model);
 
-        // also draw the lamp object
-        lampShader.use();
-        lampShader.setMat4("projection", projection);
-        lampShader.setMat4("view", view);
-        const lampModel = translation(lightPos).matmul(scale(vec3(0.2, 0.2, 0.2)));
-        lampShader.setMat4("model", lampModel);
-
-        glBindVertexArray(lampVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
