@@ -179,7 +179,6 @@ pub fn main() !void {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
-    // ----------------------------------------------------------------------------------------------
     const captureProjection = perspective(pi / 2.0, 1.0, 0.1, 10.0);
     const captureViews = [_]Mat4{
         lookAt(vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 0.0), vec3(0.0, -1.0, 0.0)),
@@ -402,8 +401,8 @@ pub fn main() !void {
 
         i = 0;
         while (i < lightPositions.len) : (i += 1) {
-            // glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-            const newPos = lightPositions[i];
+            const newPos = lightPositions[i].add(vec3(sin(@floatCast(f32, glfwGetTime()) * 5.0 - @intToFloat(f32, i)) * 5.0, 0.0, 0.0));
+            // const newPos = lightPositions[i];
             pbrShader.setVec3(posNames[i], newPos);
             pbrShader.setVec3(colNames[i], lightColors[i]);
 
