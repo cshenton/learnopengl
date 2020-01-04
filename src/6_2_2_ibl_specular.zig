@@ -43,16 +43,16 @@ pub fn main() !void {
     const allocator = std.heap.page_allocator;
 
     // Shader paths
-    const backgroundFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_background.frag"});
-    const backgroundVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_background.vert"});
-    const brdfFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_brdf.frag"});
-    const brdfVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_brdf.vert"});
-    const cubemapVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_cubemap.vert"});
-    const equirectFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_equirectangular_to_cubemap.frag"});
-    const irradianceFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_irradiance_convolution.frag"});
-    const pbrFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_pbr.frag"});
-    const pbrVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_pbr.vert"});
-    const prefilterFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_prefilter.frag"});
+    const backgroundFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_background.frag" });
+    const backgroundVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_background.vert" });
+    const brdfFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_brdf.frag" });
+    const brdfVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_brdf.vert" });
+    const cubemapVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_cubemap.vert" });
+    const equirectFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_equirectangular_to_cubemap.frag" });
+    const irradianceFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_irradiance_convolution.frag" });
+    const pbrFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_pbr.frag" });
+    const pbrVertPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_pbr.vert" });
+    const prefilterFragPath = try join(allocator, &[_][]const u8{ "shaders", "6_2_2_prefilter.frag" });
 
     const ok = glfwInit();
     if (ok == 0) {
@@ -64,7 +64,6 @@ pub fn main() !void {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 
     if (builtin.os == builtin.Os.macosx) {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -99,7 +98,6 @@ pub fn main() !void {
     const sphere = Sphere.init();
     const quad = Quad.init();
 
-
     // build and compile shaders
     const pbrShader = try Shader.init(allocator, pbrVertPath, pbrFragPath);
     const equirectangularToCubemapShader = try Shader.init(allocator, cubemapVertPath, equirectFragPath);
@@ -120,10 +118,10 @@ pub fn main() !void {
 
     // lights
     const lightPositions = [_]Vec3{
-        vec3(-10.0,  10.0, 10.0),
-        vec3( 10.0,  10.0, 10.0),
+        vec3(-10.0, 10.0, 10.0),
+        vec3(10.0, 10.0, 10.0),
         vec3(-10.0, -10.0, 10.0),
-        vec3( 10.0, -10.0, 10.0),
+        vec3(10.0, -10.0, 10.0),
     };
     const lightColors = [_]Vec3{
         vec3(300.0, 300.0, 300.0),
@@ -183,13 +181,13 @@ pub fn main() !void {
     // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
     // ----------------------------------------------------------------------------------------------
     const captureProjection = perspective(pi / 2.0, 1.0, 0.1, 10.0);
-    const captureViews = [_]Mat4 {
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(1.0,  0.0,  0.0), vec3(0.0, -1.0,  0.0)),
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(-1.0,  0.0,  0.0), vec3(0.0, -1.0,  0.0)),
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0,  1.0,  0.0), vec3(0.0,  0.0,  1.0)),
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0, -1.0,  0.0), vec3(0.0,  0.0, -1.0)),
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0,  0.0,  1.0), vec3(0.0, -1.0,  0.0)),
-        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0,  0.0, -1.0), vec3(0.0, -1.0,  0.0)),
+    const captureViews = [_]Mat4{
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 0.0), vec3(0.0, -1.0, 0.0)),
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(-1.0, 0.0, 0.0), vec3(0.0, -1.0, 0.0)),
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0)),
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0, -1.0, 0.0), vec3(0.0, 0.0, -1.0)),
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(0.0, -1.0, 0.0)),
+        lookAt(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, -1.0), vec3(0.0, -1.0, 0.0)),
     };
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
@@ -336,8 +334,7 @@ pub fn main() !void {
     glViewport(0, 0, scrWidth, scrHeight);
 
     // render loop
-    while (glfwWindowShouldClose(window) == 0)
-    {
+    while (glfwWindowShouldClose(window) == 0) {
         // per-frame time logic
         const currentFrame = @floatCast(f32, glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -375,8 +372,8 @@ pub fn main() !void {
                 pbrShader.setFloat("roughness", clamp(@intToFloat(f32, col) / @intToFloat(f32, nrColumns), 0.05, 1.0));
 
                 const model = translation(vec3(
-                    @intToFloat(f32, col - (nrColumns/2)) * spacing,
-                    @intToFloat(f32, row - (nrRows/2)) * spacing,
+                    @intToFloat(f32, col - (nrColumns / 2)) * spacing,
+                    @intToFloat(f32, row - (nrRows / 2)) * spacing,
                     -2.0,
                 ));
                 pbrShader.setMat4("model", model);
@@ -433,7 +430,6 @@ pub fn main() !void {
         glfwPollEvents();
     }
 }
-
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 pub extern fn processInput(window: ?*GLFWwindow) void {
@@ -499,8 +495,8 @@ const Sphere = struct {
         const X_SEGMENTS = 64;
         const Y_SEGMENTS = 64;
 
-        const numVertices = 8 * (X_SEGMENTS+1) * (Y_SEGMENTS+1);
-        const numElements = 2 * (X_SEGMENTS+1) * Y_SEGMENTS;
+        const numVertices = 8 * (X_SEGMENTS + 1) * (Y_SEGMENTS + 1);
+        const numElements = 2 * (X_SEGMENTS + 1) * Y_SEGMENTS;
 
         // Stack allocated vertex, element buffers
         var vertices: [numVertices]f32 = undefined;
@@ -512,19 +508,19 @@ const Sphere = struct {
             var x: u32 = 0;
             while (x <= X_SEGMENTS) : (x += 1) {
                 const xSegment = @intToFloat(f32, x) / @intToFloat(f32, X_SEGMENTS);
-                const ySegment =  @intToFloat(f32, y) / @intToFloat(f32, Y_SEGMENTS);
+                const ySegment = @intToFloat(f32, y) / @intToFloat(f32, Y_SEGMENTS);
                 const xPos = cos(xSegment * 2.0 * pi) * sin(ySegment * pi);
                 const yPos = cos(ySegment * pi);
                 const zPos = sin(xSegment * 2.0 * pi) * sin(ySegment * pi);
 
-                vertices[i+0] = xPos;
-                vertices[i+1] = yPos;
-                vertices[i+2] = zPos;
-                vertices[i+3] = xSegment;
-                vertices[i+4] = ySegment;
-                vertices[i+5] = xPos;
-                vertices[i+6] = yPos;
-                vertices[i+7] = zPos;
+                vertices[i + 0] = xPos;
+                vertices[i + 1] = yPos;
+                vertices[i + 2] = zPos;
+                vertices[i + 3] = xSegment;
+                vertices[i + 4] = ySegment;
+                vertices[i + 5] = xPos;
+                vertices[i + 6] = yPos;
+                vertices[i + 7] = zPos;
 
                 i += 8;
             }
@@ -533,18 +529,18 @@ const Sphere = struct {
         i = 0;
         y = 0;
         while (y < Y_SEGMENTS) : (y += 1) {
-            if (y%2 == 0) {
+            if (y % 2 == 0) {
                 var x: u32 = 0;
                 while (x <= X_SEGMENTS) : (x += 1) {
-                    elements[i+0] = y * (X_SEGMENTS + 1) + x;
-                    elements[i+1] = (y + 1) * (X_SEGMENTS + 1) + x;
+                    elements[i + 0] = y * (X_SEGMENTS + 1) + x;
+                    elements[i + 1] = (y + 1) * (X_SEGMENTS + 1) + x;
                     i += 2;
                 }
             } else {
                 var x: u32 = X_SEGMENTS + 1;
                 while (x > 0) : (x -= 1) {
-                    elements[i+0] = (y + 1) * (X_SEGMENTS + 1) + x - 1;
-                    elements[i+1] = y * (X_SEGMENTS + 1) + x - 1;
+                    elements[i + 0] = (y + 1) * (X_SEGMENTS + 1) + x - 1;
+                    elements[i + 1] = y * (X_SEGMENTS + 1) + x - 1;
                     i += 2;
                 }
             }
@@ -574,7 +570,6 @@ const Sphere = struct {
         // glBindVertexArray(0);
     }
 };
-
 
 /// A Cube in three dimensions
 const Cube = struct {

@@ -18,7 +18,6 @@ pub fn build(b: *Builder) void {
         .{ .name = "lighting_maps", .src = "src/2_4_lighting_maps.zig", .description = "Lighting Maps" },
         .{ .name = "light_casters", .src = "src/2_5_light_casters.zig", .description = "Light Casters" },
         .{ .name = "multiple_lights", .src = "src/2_6_multiple_lights.zig", .description = "Multiple Light Sources" },
-
         .{ .name = "ibl_specular", .src = "src/6_2_2_ibl_specular.zig", .description = "Image Based Lighting with Specular" },
     };
 
