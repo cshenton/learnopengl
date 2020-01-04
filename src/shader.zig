@@ -84,7 +84,7 @@ pub const Shader = struct {
     fn checkCompileErrors(shader: c_uint, errType: []const u8) void {
         var success: c_int = undefined;
         var infoLog: [1024]u8 = undefined;
-        if (std.mem.eql(u8, errType, "PROGRAM")) {
+        if (!std.mem.eql(u8, errType, "PROGRAM")) {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (success == 0) {
                 glGetShaderInfoLog(shader, 1024, null, &infoLog);

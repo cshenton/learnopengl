@@ -319,12 +319,7 @@ pub fn main() !void {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // initialize static shader uniforms before rendering
-    const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
-    pbrShader.use();
-    pbrShader.setMat4("projection", projection);
-    backgroundShader.use();
-    backgroundShader.setMat4("projection", projection);
+
 
     // then before rendering, configure the viewport to the original framebuffer's screen dimensions
     var scrWidth: c_int = undefined;
@@ -334,6 +329,13 @@ pub fn main() !void {
 
     // render loop
     while (glfwWindowShouldClose(window) == 0) {
+        // initialize static shader uniforms before rendering
+        const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
+        pbrShader.use();
+        pbrShader.setMat4("projection", projection);
+        backgroundShader.use();
+        backgroundShader.setMat4("projection", projection);
+
         // per-frame time logic
         const currentFrame = @floatCast(f32, glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -491,8 +493,8 @@ const Sphere = struct {
         glGenBuffers(1, &vbo);
         glGenBuffers(1, &ebo);
 
-        const X_SEGMENTS = 64;
-        const Y_SEGMENTS = 64;
+        const X_SEGMENTS = 256;
+        const Y_SEGMENTS = 256;
 
         const numVertices = 8 * (X_SEGMENTS + 1) * (Y_SEGMENTS + 1);
         const numElements = 2 * (X_SEGMENTS + 1) * Y_SEGMENTS;
