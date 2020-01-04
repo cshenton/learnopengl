@@ -38,6 +38,8 @@ var deltaTime: f32 = 0.0;
 var lastFrame: f32 = 0.0;
 
 pub fn main() !void {
+    camera.movementSpeed = 10.0;
+
     const allocator = std.heap.page_allocator;
 
     // Shader paths
@@ -131,7 +133,7 @@ pub fn main() !void {
     };
     const nrRows = 7;
     const nrColumns = 7;
-    const spacing = 2.5;
+    const spacing: f32 = 2.5;
 
     // pbr: setup framebuffer
     var captureFBO: c_uint = undefined;
@@ -213,7 +215,6 @@ pub fn main() !void {
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
-    // --------------------------------------------------------------------------------
     var irradianceMap: c_uint = undefined;
     glGenTextures(1, &irradianceMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
@@ -273,22 +274,22 @@ pub fn main() !void {
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    var mip: c_int = 0;
+    var mip: c_uint = 0;
     while (mip < 5) : (mip += 1) {
         // reisze framebuffer according to mip-level size.
-        const okayThen: c_int = 128;
-        const mipWidth = okayThen >> @intCast(u5, mip);
-        const mipHeight = okayThen >> @intCast(u5, mip);
+        const okayThen: c_uint = 128;
+        const mipWidth: c_uint = okayThen >> @intCast(u5, mip);
+        const mipHeight: c_uint = okayThen >> @intCast(u5, mip);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-        glViewport(0, 0, mipWidth, mipHeight);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, @intCast(c_int, mipWidth), @intCast(c_int, mipHeight));
+        glViewport(0, 0, @intCast(c_int, mipWidth), @intCast(c_int, mipHeight));
 
         const roughness = @intToFloat(f32, mip) / @intToFloat(f32, 5 - 1);
         prefilterShader.setFloat("roughness", roughness);
         i = 0;
         while (i < 6) : (i += 1) {
             prefilterShader.setMat4("view", captureViews[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, @intCast(c_int, mip));
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             cube.render();
         }
@@ -323,6 +324,7 @@ pub fn main() !void {
 
     // initialize static shader uniforms before rendering
     const projection = perspective(camera.zoom / 180.0 * pi, @intToFloat(f32, SCR_WIDTH) / @intToFloat(f32, SCR_HEIGHT), 0.1, 100.0);
+    pbrShader.use();
     pbrShader.setMat4("projection", projection);
     backgroundShader.use();
     backgroundShader.setMat4("projection", projection);
@@ -363,18 +365,18 @@ pub fn main() !void {
         glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
         // render rows*column number of spheres with material properties defined by textures (they all have the same material properties)
-        var row: usize = 0;
+        var row: i32 = 0;
         while (row < nrRows) : (row += 1) {
             pbrShader.setFloat("metallic", @intToFloat(f32, row) / @intToFloat(f32, nrRows));
-            var col: usize = 0;
+            var col: i32 = 0;
             while (col < nrColumns) : (col += 1) {
                 // we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
                 // on direct lighting.
                 pbrShader.setFloat("roughness", clamp(@intToFloat(f32, col) / @intToFloat(f32, nrColumns), 0.05, 1.0));
 
                 const model = translation(vec3(
-                    @intToFloat(f32, col) - @intToFloat(f32, nrColumns) / 2.0 * spacing,
-                    @intToFloat(f32, row) - @intToFloat(f32, nrRows) / 2.0 * spacing,
+                    @intToFloat(f32, col - (nrColumns/2)) * spacing,
+                    @intToFloat(f32, row - (nrRows/2)) * spacing,
                     -2.0,
                 ));
                 pbrShader.setMat4("model", model);
