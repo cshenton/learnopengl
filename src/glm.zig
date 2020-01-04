@@ -6,6 +6,12 @@ const sqrt = std.math.sqrt;
 const cos = std.math.cos;
 const sin = std.math.sin;
 const tan = std.math.tan;
+const max = std.math.max;
+const min = std.math.min;
+
+pub fn clamp(v: var, lo: var, hi: var) @TypeOf(v) {
+    return max(min(v, hi), lo);
+}
 
 /// Mathematical vector types
 fn Vector(comptime d: usize) type {
