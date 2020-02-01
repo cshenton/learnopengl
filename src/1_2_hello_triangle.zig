@@ -14,7 +14,7 @@ const vertexShaderSource: [:0]const u8 =
     \\void main()
     \\{
     \\   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-    \\};
+    \\}
 ;
 const fragmentShaderSource: [:0]const u8 =
     \\#version 330 core
@@ -22,7 +22,7 @@ const fragmentShaderSource: [:0]const u8 =
     \\void main()
     \\{
     \\   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-    \\};
+    \\}
 ;
 
 pub fn main() void {
