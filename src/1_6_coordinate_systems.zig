@@ -36,7 +36,7 @@ pub fn main() !void {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    if (builtin.os == builtin.Os.macosx) {
+    if (builtin.os.tag == .macosx) {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
@@ -239,13 +239,13 @@ pub fn main() !void {
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-pub extern fn processInput(window: ?*GLFWwindow) void {
+pub fn processInput(window: ?*GLFWwindow) callconv(.C) void {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-pub extern fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) void {
+pub fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) callconv(.C) void {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);

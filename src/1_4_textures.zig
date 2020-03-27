@@ -27,7 +27,7 @@ pub fn main() !void {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    if (builtin.os == builtin.Os.macosx) {
+    if (builtin.os.tag == .macosx) {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
@@ -51,14 +51,14 @@ pub fn main() !void {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     const vertices = [_]f32{
         // positions       // colors        // texture coords
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0, // top right
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0, // bottom right
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, // bottom left
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0, // top left
+        0.5,  0.5,  0.0, 1.0, 0.0, 0.0, 1.0, 1.0, // top right
+        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
+        -0.5, 0.5,  0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     };
     const indices = [_]u32{
         0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+        1, 2, 3, // second triangle
     };
 
     var VAO: c_uint = undefined;
@@ -91,7 +91,6 @@ pub fn main() !void {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * @sizeOf(f32), @intToPtr(*c_void, 6 * @sizeOf(f32)));
     glEnableVertexAttribArray(2);
 
-
     // load and create a texture
     var texture1: c_uint = undefined;
     var texture2: c_uint = undefined;
@@ -99,7 +98,7 @@ pub fn main() !void {
     // texture 1
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
-     // set the texture wrapping parameters
+    // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
@@ -175,13 +174,13 @@ pub fn main() !void {
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-pub extern fn processInput(window: ?*GLFWwindow) void {
+pub fn processInput(window: ?*GLFWwindow) callconv(.C) void {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-pub extern fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) void {
+pub fn framebuffer_size_callback(window: ?*GLFWwindow, width: c_int, height: c_int) callconv(.C) void {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
