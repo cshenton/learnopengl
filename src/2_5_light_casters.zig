@@ -52,10 +52,7 @@ pub fn main() !void {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    if (builtin.os.tag == .macosx) {
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    }
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     // glfw: initialize and configure
     var window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL", null, null);
@@ -224,7 +221,7 @@ pub fn main() !void {
         var i: usize = 0;
         while (i < 10) : (i += 1) {
             // calculate the model matrix for each object and pass it to shader before drawing
-            const model = translation(cubePositions[i]);
+            var model = translation(cubePositions[i]);
             const angle = 20.0 * @intToFloat(f32, i);
             model = model.matmul(rotation(angle / 180.0 * pi, vec3(1.0, 0.3, 0.5)));
             cubeShader.setMat4("model", model);

@@ -36,34 +36,30 @@ const Target = struct {
         var exe = b.addExecutable(self.name, self.src);
         exe.setBuildMode(b.standardReleaseOptions());
 
-        // OS stuff
+        // Includes
+        exe.addIncludeDir("deps/include");
+
+        // Sources
+        exe.addCSourceFile("deps/src/stb_image_impl.c", &[_][]const u8{"-std=c99"});
+        exe.addCSourceFile("deps/src/glad.c", &[_][]const u8{"-std=c99"});
+
+        // Libraries
         exe.linkLibC();
+        exe.addLibPath("deps/lib");
+        exe.linkSystemLibrary("glfw3");
+
+        // OS specific
         switch (builtin.os.tag) {
             .windows => {
                 exe.linkSystemLibrary("kernel32");
                 exe.linkSystemLibrary("user32");
                 exe.linkSystemLibrary("shell32");
                 exe.linkSystemLibrary("gdi32");
-
-                exe.addIncludeDir("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\include");
-                exe.addLibPath("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows-static\\lib");
-
-                // exe.addIncludeDir("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows\\include");
-                exe.addLibPath("C:\\Users\\charlie\\src\\github.com\\Microsoft\\vcpkg\\installed\\x64-windows\\lib");
             },
-            else => {},
+            else => {
+                @compileError("Not supported, contributions welcome.");
+            },
         }
-
-        // GLFW
-        exe.linkSystemLibrary("glfw3");
-
-        // STB
-        exe.addCSourceFile("deps/stb_image/src/stb_image_impl.c", &[_][]const u8{"-std=c99"});
-        exe.addIncludeDir("deps/stb_image/include");
-
-        // GLAD
-        exe.addCSourceFile("deps/glad/src/glad.c", &[_][]const u8{"-std=c99"});
-        exe.addIncludeDir("deps/glad/include");
 
         b.default_step.dependOn(&exe.step);
         b.step(self.name, self.description).dependOn(&exe.run().step);
