@@ -46,18 +46,18 @@ const Target = struct {
         // Libraries
         exe.linkLibC();
         exe.addLibPath("deps/lib");
-        exe.linkSystemLibrary("glfw3");
 
         // OS specific
         switch (builtin.os.tag) {
             .windows => {
+                exe.linkSystemLibrary("glfw3");
                 exe.linkSystemLibrary("kernel32");
                 exe.linkSystemLibrary("user32");
                 exe.linkSystemLibrary("shell32");
                 exe.linkSystemLibrary("gdi32");
             },
             else => {
-                @compileError("Not supported, contributions welcome.");
+                exe.linkSystemLibrary("glfw");
             },
         }
 
