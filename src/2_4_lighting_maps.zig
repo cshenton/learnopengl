@@ -300,7 +300,7 @@ pub fn loadTexture(path: [:0]const u8) c_uint {
 
         stbi_image_free(data);
     } else {
-        warn("Failed to load texture at path: {}\n", .{path});
+        warn("Failed to load texture at path: {s}\n", .{path});
     }
 
     return textureID;
