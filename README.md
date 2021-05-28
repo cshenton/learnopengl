@@ -1,6 +1,6 @@
 # Zig Learn OpenGL
 
-[Learn OpenGL](learnopengl.com) tutorials ported to the zig programming language. This repo follows
+[Learn OpenGL](https://learnopengl.com) tutorials ported to the zig programming language. This repo follows
 the chronological order of the website, separating out the same functionality into separate files.
 The repository is intended to serve as a demonstration of how to use OpenGL with zig, both in user
 code, and with the zig build system.
